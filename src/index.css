@@ -94,6 +94,11 @@ video {
     vertical-align: baseline;
 }
 
+ul,
+li {
+    list-style-type: none;
+}
+
 
 /* HTML5 display-role reset for older browsers */
 

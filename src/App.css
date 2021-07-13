@@ -30,14 +30,14 @@ main {
     flex-direction: row;
 }
 
-.container>* {
+.container__half {
     flex: 1;
 }
 
 
 /* SEARCH */
 
-.wrapper_left_search {
+.wrapper_search {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -45,7 +45,7 @@ main {
     background-color: var(--black);
 }
 
-.wrapper_left_search input {
+.wrapper_search input {
     width: 60%;
     font-size: 1em;
     outline: none;
@@ -53,4 +53,24 @@ main {
     border: 1px solid rgba(84, 84, 84, 0.32);
     padding: 1.1rem 0.5rem;
     background-color: white;
+}
+
+
+/* LISTING */
+
+.wrapper_movies-list {
+    width: 100%;
+}
+
+.wrapper_inner__movies-list .item_list {
+    width: 100%;
+    font-size: 1em;
+    outline: none;
+    border-radius: 5px;
+    border: 1px solid rgba(84, 84, 84, 0.32);
+    padding: 15px 5px;
+    background-color: #fcfbfb;
+    height: 50px;
+    cursor: pointer;
+    margin-bottom: 15px;
 }

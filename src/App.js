@@ -8,9 +8,8 @@ import MovieContext from "./context/MovieContext";
 import Search from "./components/Search";
 import Listing from "./components/Listing";
 import Details from "./components/Details";
-import Loader from "./components/Loader";
 import "./App.css";
-import { fetchMovies, URL, API_KEY } from "./config";
+import { URL, API_KEY } from "./config";
 
 function App() {
 	// const [popularData, setPopularData] = useState([]);
@@ -20,11 +19,12 @@ function App() {
 
 	const [searchData, setSearchData] = useState([]);
 	const [currMovie, setCurrMovie] = useState(null);
-	let endpoint;
 
 	useEffect(() => {
 		const fetchData = async () => {
+			let endpoint;
 			if (!searchTerm) {
+				console.log("fetch in");
 				endpoint = await axios.get(`${URL}movie/popular?api_key=${API_KEY}`);
 			} else {
 				console.log("in else");
@@ -33,6 +33,8 @@ function App() {
 				);
 			}
 			setSearchData(endpoint.data.results);
+			setCurrMovie(endpoint?.data?.results[0]?.id);
+
 			setIsLoading(false);
 		};
 		fetchData();
@@ -52,10 +54,22 @@ function App() {
 								setSearchNow(!searchNow);
 							}}
 						/>
-						<Listing movies={searchData} />
+						{searchNow && searchData.length === 0 ? (
+							<div className="error-message">
+								<p>Ce film n'existe pas.</p>
+							</div>
+						) : (
+							<Listing movies={searchData} />
+						)}
 					</div>
 					<div className="container__half">
-						<Details movieId={currMovie} />
+						{searchData.length === 0 || currMovie === null ? (
+							<div className="error-message" style={{ margin: "0 1rem 0" }}>
+								<p>Aucun film n'a été sélectionné</p>
+							</div>
+						) : (
+							<Details movieId={currMovie} />
+						)}
 					</div>
 				</div>
 			</MovieContext.Provider>

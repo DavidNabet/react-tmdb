@@ -7,6 +7,7 @@ const Search = ({ query, handleChange }) => {
 				onChange={handleChange}
 				placeholder="Search..."
 			/>
+			<i className="fas fa-search"></i>
 		</div>
 	);
 };

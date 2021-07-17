@@ -4,7 +4,7 @@ import { useContext } from "react";
 import MovieContext from "../context/MovieContext";
 import { IMAGE_BASE_URL, POSTER_SIZE, URL, API_KEY } from "../config";
 
-const Details = ({ movieId }) => {
+const Details = () => {
 	// console.log("SINGLE MOVIE ", movie);
 	// const [isLoading, setIsLoading] = useState(true);
 	const [singleMovie, setSingleMovie] = useState({});
@@ -16,14 +16,20 @@ const Details = ({ movieId }) => {
 				let newState = {};
 
 				const response = await axios.get(
-					`${URL}movie/${movieId}/credits?api_key=${API_KEY}`
+					`${URL}movie/${currMovie}/credits?api_key=${API_KEY}`
 				);
+
+				const request = await axios.get(
+					`${URL}movie/${currMovie}?api_key=${API_KEY}`
+				);
+
 				const directors = response.data.crew.filter(
 					(member) => member.job === "Director"
 				);
 				if (searchData.length === 0) {
 					newState = {};
 				} else {
+					newState.genres = request.data.genres;
 					newState.actors = response.data.cast;
 					newState.detail = movie;
 					newState.directors = directors;
@@ -35,7 +41,7 @@ const Details = ({ movieId }) => {
 			}
 		};
 		fetchMovie();
-	}, [movieId, movie, searchData]);
+	}, [currMovie, movie, searchData]);
 
 	return (
 		<div className="wrapper_movie-details">
@@ -55,6 +61,11 @@ const Details = ({ movieId }) => {
 					{/* Title */}
 					<div className="inner__top-infos">
 						<h1>{singleMovie.detail?.title}</h1>
+						{/* Date de sortie */}
+						<div className="infos-date">
+							<span>{singleMovie.detail?.release_date}</span>
+						</div>
+						{/* Score */}
 						<div className="infos-rating">
 							<meter
 								min="0"
@@ -65,9 +76,10 @@ const Details = ({ movieId }) => {
 								value={String(singleMovie.detail?.vote_average * 10)}
 							/>
 							<span className="infos-score">
-								{singleMovie.detail?.vote_average}
+								{`${singleMovie.detail?.vote_average} / 10`}
 							</span>
 						</div>
+						{/* Director */}
 						<div className="infos-directors">
 							{singleMovie.directors?.length > 1 ? (
 								<h3>DIRECTORS</h3>
@@ -80,6 +92,13 @@ const Details = ({ movieId }) => {
 										{el.name}
 									</p>
 								);
+							})}
+						</div>
+						{/* Genres */}
+						<div className="infos-genres">
+							<h3>GENRES</h3>
+							{singleMovie.genres?.map((genre) => {
+								return <span>{genre.name}</span>;
 							})}
 						</div>
 					</div>

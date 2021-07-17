@@ -5,9 +5,8 @@ const Search = ({ query, handleChange }) => {
 				type="text"
 				value={query}
 				onChange={handleChange}
-				placeholder="Search..."
+				placeholder="Chercher un film..."
 			/>
-			<i className="fas fa-search"></i>
 		</div>
 	);
 };

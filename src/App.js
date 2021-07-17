@@ -12,10 +12,8 @@ import "./App.css";
 import { URL, API_KEY } from "./config";
 
 function App() {
-	// const [popularData, setPopularData] = useState([]);
 	const [searchTerm, setSearchTerm] = useState("");
 	const [isLoading, setIsLoading] = useState(true);
-	const [searchNow, setSearchNow] = useState(false);
 
 	const [searchData, setSearchData] = useState([]);
 	const [currMovie, setCurrMovie] = useState(null);
@@ -29,7 +27,9 @@ function App() {
 			} else {
 				console.log("in else");
 				endpoint = await axios.get(
-					`${URL}search/movie?api_key=${API_KEY}&language=en-US&query=${searchTerm}`
+					`${URL}search/movie?api_key=${API_KEY}&language=en-US&query=${searchTerm
+						.trim()
+						.toLocaleLowerCase()}`
 				);
 			}
 			setSearchData(endpoint.data.results);
@@ -38,12 +38,13 @@ function App() {
 			setIsLoading(false);
 		};
 		fetchData();
-	}, [searchNow, searchTerm]);
+	}, [searchTerm]);
 
 	return isLoading ? (
 		<div>Chargement en cours</div>
 	) : (
 		<main>
+			{/* Ici, j'utilise le context pour éviter les prérendus inutiles à chaque chargement des composants */}
 			<MovieContext.Provider value={{ searchData, currMovie, setCurrMovie }}>
 				<div className="container">
 					<div className="container__half">
@@ -51,15 +52,14 @@ function App() {
 							query={searchTerm}
 							handleChange={(e) => {
 								setSearchTerm(e.target.value);
-								setSearchNow(!searchNow);
 							}}
 						/>
-						{searchNow && searchData.length === 0 ? (
+						{Array.isArray(searchData) && searchData.length === 0 ? (
 							<div className="error-message">
 								<p>Ce film n'existe pas.</p>
 							</div>
 						) : (
-							<Listing movies={searchData} />
+							<Listing />
 						)}
 					</div>
 					<div className="container__half">
@@ -68,7 +68,7 @@ function App() {
 								<p>Aucun film n'a été sélectionné</p>
 							</div>
 						) : (
-							<Details movieId={currMovie} />
+							<Details />
 						)}
 					</div>
 				</div>

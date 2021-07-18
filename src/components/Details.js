@@ -1,32 +1,40 @@
 import { useState, useEffect } from "react";
+// Package
 import axios from "axios";
+// Context
 import { useContext } from "react";
 import MovieContext from "../context/MovieContext";
-import { IMAGE_BASE_URL, POSTER_SIZE, URL, API_KEY } from "../config";
+// Helper/Config
+import {
+	IMAGE_BASE_URL,
+	POSTER_SIZE,
+	URL,
+	API_KEY,
+	formatDate,
+} from "../utils";
 
 const Details = () => {
-	// console.log("SINGLE MOVIE ", movie);
-	// const [isLoading, setIsLoading] = useState(true);
+	const { data, currentMovie } = useContext(MovieContext);
 	const [singleMovie, setSingleMovie] = useState({});
-	const { searchData, currMovie } = useContext(MovieContext);
-	const movie = searchData.find((el) => el.id === currMovie);
+	// Affichage du détail d'un film par rapport à la requête sur la liste de films populaires
+	const movie = data.find((el) => el.id === currentMovie);
 	useEffect(() => {
 		const fetchMovie = async () => {
 			try {
 				let newState = {};
 
 				const response = await axios.get(
-					`${URL}movie/${currMovie}/credits?api_key=${API_KEY}`
+					`${URL}movie/${currentMovie}/credits?api_key=${API_KEY}&language=fr-FR`
 				);
 
 				const request = await axios.get(
-					`${URL}movie/${currMovie}?api_key=${API_KEY}`
+					`${URL}movie/${currentMovie}?api_key=${API_KEY}&language=fr-FR`
 				);
 
 				const directors = response.data.crew.filter(
 					(member) => member.job === "Director"
 				);
-				if (searchData.length === 0) {
+				if (data.length === 0) {
 					newState = {};
 				} else {
 					newState.genres = request.data.genres;
@@ -35,13 +43,15 @@ const Details = () => {
 					newState.directors = directors;
 				}
 				// setIsLoading(false);
-				setSingleMovie(newState);
+				if (response.status === 200 && request.status === 200) {
+					setSingleMovie(newState);
+				}
 			} catch (error) {
-				console.log(error.message);
+				console.error(error.message);
 			}
 		};
 		fetchMovie();
-	}, [currMovie, movie, searchData]);
+	}, [currentMovie, movie, data]);
 
 	return (
 		<div className="wrapper_movie-details">
@@ -63,7 +73,8 @@ const Details = () => {
 						<h1>{singleMovie.detail?.title}</h1>
 						{/* Date de sortie */}
 						<div className="infos-date">
-							<span>{singleMovie.detail?.release_date}</span>
+							<h3>Date de sortie</h3>
+							<span>{formatDate(singleMovie.detail?.release_date)}</span>
 						</div>
 						{/* Score */}
 						<div className="infos-rating">
@@ -75,16 +86,14 @@ const Details = () => {
 								high="70"
 								value={String(singleMovie.detail?.vote_average * 10)}
 							/>
-							<span className="infos-score">
-								{`${singleMovie.detail?.vote_average} / 10`}
-							</span>
+							<span>{`${singleMovie.detail?.vote_average} / 10`}</span>
 						</div>
 						{/* Director */}
 						<div className="infos-directors">
 							{singleMovie.directors?.length > 1 ? (
-								<h3>DIRECTORS</h3>
+								<h3>DIRECTEURS</h3>
 							) : (
-								<h3>DIRECTOR</h3>
+								<h3>DIRECTEUR</h3>
 							)}
 							{singleMovie.directors?.map((el, i) => {
 								return (
@@ -96,16 +105,18 @@ const Details = () => {
 						</div>
 						{/* Genres */}
 						<div className="infos-genres">
-							<h3>GENRES</h3>
-							{singleMovie.genres?.map((genre) => {
-								return <span>{genre.name}</span>;
-							})}
+							<h3>GENRE(S)</h3>
+							<div className="genre">
+								{singleMovie.genres?.map(({ id, name }) => {
+									return <span key={id}>{name}</span>;
+								})}
+							</div>
 						</div>
 					</div>
 				</div>
 				<div className="wrapper__inner-bottom">
 					<p>{singleMovie?.detail?.overview}</p>
-					<h3>ACTORS</h3>
+					<h3>ACTEUR(S)</h3>
 					<div className="inner__bottom-actors">
 						{singleMovie?.actors?.map((actor, i) => {
 							return (

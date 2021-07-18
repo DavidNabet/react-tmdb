@@ -1,8 +1,10 @@
 import LoaderSrc from "../../assets/loader.svg";
+import "./loader.css";
 const Loader = () => {
 	return (
-		<div>
-			<img style={{ width: 50 }} alt="Loader icon" src={LoaderSrc} />
+		<div className="loading-state">
+			<img style={{ width: 70 }} alt="Loader icon" src={LoaderSrc} />
+			<span className="loading-state--text">Loading...</span>
 		</div>
 	);
 };

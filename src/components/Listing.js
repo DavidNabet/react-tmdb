@@ -2,7 +2,7 @@
 import { useContext } from "react";
 import MovieContext from "../context/MovieContext";
 
-const Listing = ({}) => {
+const Listing = () => {
 	const { setCurrentMovie, data } = useContext(MovieContext);
 	return (
 		<div className="wrapper_movies-list">

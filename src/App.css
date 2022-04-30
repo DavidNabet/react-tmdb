@@ -25,7 +25,7 @@ body {
 
 main {
     width: 1440px;
-    margin: 3rem auto 0;
+    margin: 3rem auto;
     max-height: 90rem;
     overflow: hidden;
 }
